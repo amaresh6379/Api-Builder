@@ -1,0 +1,1103 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Api Builder</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="api-builder-function">Api Builder Function</h1>
+<p>To execute the <code>api_builder</code> function, use the following SQL command:</p>
+<p>SELECT public.api_builder(’[]’);</p>
+<p>No Need for use of transaction</p>
+<p>Example:</p>
+<pre><code>SELECT public.api_builder('[
+    {
+        "id": 1,
+        "operation": "FIND_ONE",
+        "data": {
+            "schema": "orders",
+            "model": "cart_products",
+            "attributes": [
+                "id", "combination_name", "instruction", "quantity", "is_replace_order",
+                "product_id", "variant_id", "product_offers", "discount_id",
+                "discount_product_id", "sales_discount_id", "is_deleted", "created_at",
+                "modified_at", "store_id", "fbt_id", "is_product_customizable",
+                "is_fbt_default_product"
+            ],
+            "where": {
+                "id": 24045,
+                "is_deleted": false
+            }
+        }
+    },
+    {
+        "id": 2,
+        "operation": "UPDATE",
+        "data": {
+            "schema": "orders",
+            "model": "cart_products",
+            "values": {
+                "is_deleted": false,
+                "fbt_id": null
+            },
+            "condition": {
+                "id": 24045 
+            }
+        },
+        "condition": [
+            {
+                "source_id": 1,
+                "field": "cart_products.fbt_id",
+                "value": "NOT NULL"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "operation": "FIND",
+        "data": {
+            "schema": "orders",
+            "model": "cart_products",
+            "attributes": [
+                "id", "combination_name", "instruction", "quantity", "is_replace_order",
+                "product_id", "variant_id", "product_offers", "discount_id",
+                "discount_product_id", "sales_discount_id", "is_deleted", "created_at",
+                "modified_at", "store_id", "fbt_id", "is_product_customizable",
+                "is_fbt_default_product", "cart_id"
+            ],
+            "where": {
+                "is_deleted": false
+            }
+        },
+        "condition": [
+            {
+                "source_id": 1,
+                "field": "cart_products.fbt_id",
+                "value": "NOT NULL"
+            }
+        ],
+        "replace": [
+            {
+                "fbt_id": {
+                    "source_id": 1,
+                    "field": "cart_products.fbt_id",
+                    "path": ["where"]
+                }
+            }
+        ],
+        "loop": [
+            {
+                "id": 1,
+                "operation": "FIND_ONE",
+                "data": {
+                    "schema": "orders",
+                    "model": "cart_products",
+                    "attributes": [
+                        "id", "combination_name", "instruction", "quantity", "is_replace_order",
+                        "product_id", "variant_id", "product_offers", "discount_id",
+                        "discount_product_id", "sales_discount_id", "is_deleted", "created_at",
+                        "modified_at", "store_id", "fbt_id", "is_product_customizable",
+                        "is_fbt_default_product"
+                    ],
+                    "where": {
+                        "is_deleted": false,
+                        "fbt_id": null
+                    }
+                },
+                "iteration_condition": [
+                    {
+                        "parent": "loop",
+                        "field": "cart_products.id",
+                        "value": "NOT NULL"
+                    },
+                    {
+                        "parent": "loop",
+                        "field": "cart_products.fbt_id",
+                        "value": "NOT NULL"
+                    },
+                    {
+                        "parent": "result",
+                        "source_id": 1,
+                        "field": "cart_products.fbt_id",
+                        "value": "NOT NULL"
+                    },
+                    {
+                        "parent": "result",
+                        "source_id": 3,
+                        "field": "cart_products.id",
+                        "value": "NOT NULL",
+                        "path": [0]
+                    }
+                ],
+                "iteration_replace": [
+                    {
+                        "product_id": {
+                            "parent": "loop",
+                            "field": "cart_products.product_id",
+                            "path": ["where"]
+                        }
+                    },
+                    {
+                        "variant_id": {
+                            "parent": "loop",
+                            "field": "cart_products.variant_id",
+                            "path": ["where"]
+                        }
+                    },
+                    {
+                        "cart_id": {
+                            "parent": "loop",
+                            "field": "cart_products.cart_id",
+                            "path": ["where"]
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "operation": "UPDATE",
+                "data": {
+                    "schema": "orders",
+                    "model": "cart_products",
+                    "values": {
+                    },
+                    "condition": {
+                        "is_deleted": false
+                    }
+                },
+                "condition": [
+                    {
+                        "source_id": 1,
+                        "field": "cart_products.fbt_id",
+                        "value": "NULL"
+                    },
+					{
+                        "source_id": 1,
+                        "field": "cart_products.fbt_id",
+                        "value": "NULL"
+                    }
+                ],
+                "replace": [
+                    {
+                        "id": {
+                            "source_id": 1,
+                            "field": "cart_products.id",
+                            "path": ["condition"]
+                        }
+                    }
+                ],
+                "iteration_condition": [
+                    {
+                        "parent": "loop",
+                        "field": "cart_products.id",
+                        "value": "NOT NULL"
+                    },
+                    {
+                        "parent": "loop",
+                        "field": "cart_products.fbt_id",
+                        "value": "NOT NULL"
+                    },						  
+                    {
+                        "parent": "result",
+                        "source_id": 1,
+                        "field": "cart_products.fbt_id",
+                        "value": "NOT NULL"
+                    },
+                    {
+                        "parent": "result",
+                        "source_id": 3,
+                        "field": "cart_products.id",
+                        "value": "NOT NULL",
+                        "path": [0]
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "operation": "UPDATE",
+                "data": {
+                    "schema": "orders",
+                    "model": "cart_products",
+                    "values": {
+                        "is_deleted": true,
+                        "fbt_id": null
+                    },
+                    "condition": {}
+                },
+                "condition": [
+                    {
+                        "source_id": 1,
+                        "field": "cart_products.fbt_id",
+                        "value": "NULL"
+                    }
+                ],
+                "iteration_condition": [
+                    {
+                        "parent": "loop",
+                        "field": "cart_products.id",
+                        "value": "NOT NULL"
+                    },
+                    {
+                        "parent": "loop",
+                        "field": "cart_products.fbt_id",
+                        "value": "NOT NULL"
+                    },						  
+                    {
+                        "parent": "result",
+                        "source_id": 1,
+                        "field": "cart_products.fbt_id",
+                        "value": "NOT NULL"
+                    },
+                    {
+                        "parent": "result",
+                        "source_id": 3,
+                        "field": "cart_products.id",
+                        "value": "NOT NULL",
+                        "path": [0]
+                    }
+                ],
+                "iteration_replace": [
+                    {
+                        "id": {
+                            "parent": "loop",
+                            "field": "cart_products.id",
+                            "path": ["condition"]
+                        }
+                    }
+                ]
+            }		            
+		 ]
+	   },
+	   {
+        "id": 4,
+        "operation": "UPDATE",
+        "data": {
+            "schema": "orders",
+            "model": "cart_products",
+            "values": {
+                "is_deleted": true
+            },
+            "condition": {
+                "id": 24045
+            }
+        },
+        "condition": [
+            {
+                "source_id": 1,
+                "field": "cart_products.fbt_id",
+                "value": "NULL"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "operation": "UPDATE",
+        "data": {
+            "schema": "orders",
+            "model": "cart_product_modifiers",
+            "values": {
+                "is_deleted": true
+            },
+            "condition": {
+                "cart_product_id": 24045 
+            }
+        },
+        "condition": [
+            {
+                "source_id": 1,
+                "field": "cart_products.fbt_id",
+                "value": "NULL"
+            },
+            {
+                "source_id": 4
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "operation": "FIND",
+        "data": {
+            "schema": "orders",
+            "model": "add_cart_on_images",
+            "attributes": ["image_url"],
+            "where": {
+                "is_deleted": false,
+                "cart_product_id": 24045  
+            }
+        },
+        "condition": [
+            {
+                "source_id": 1,
+                "field": "cart_products.fbt_id",
+                "value": "NULL"
+            },
+            {
+                "source_id": 4
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "operation": "UPDATE",
+        "data": {
+            "schema": "orders",
+            "model": "add_cart_on_images",
+            "values": {
+                "is_deleted": true
+            },
+            "condition": {
+                "cart_product_id": 24045 
+            }
+        },
+        "condition": [
+            {
+                "source_id": 1,
+                "field": "cart_products.fbt_id",
+                "value": "NULL"
+            },
+            {
+                "source_id": 4
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "operation": "FIND",
+        "data": {
+            "schema": "orders",
+            "model": "cart_products_customize_details",
+            "attributes": [
+                "id",
+                "customize_image_link",
+                "uploaded_image",
+                "uploaded_text",
+                "customized_data",
+                "file_url",
+                "store_id",
+                "is_deleted",
+                "created_at",
+                "modified_at"
+            ],
+            "where": {
+                "is_deleted": false,
+                "cart_product_id": 24045 
+            }
+        },
+        "condition": [
+            {
+                "source_id": 1,
+                "field": "cart_products.fbt_id",
+                "value": "NULL"
+            },
+            {
+                "source_id": 4
+            }
+        ]
+    }
+]');
+</code></pre>
+<p>For every operation in your api function you need to add that operation in the api builder function.</p>
+<h4 id="constraints">Constraints</h4>
+<ul>
+<li><strong>id</strong>:  A unique identifier for the operation.</li>
+<li><strong>operation</strong>: Specifies the type of database operation to perform. Must be in uppercase.</li>
+</ul>
+<h3 id="supported-operations">Supported Operations:</h3>
+<h4 id="operation-find">“operation”: “FIND”</h4>
+<p>Alternatives to Sequelize’s <code>findAll</code> and <code>findOne</code> with <code>include</code> conditions,</p>
+<p>Input Requirements:</p>
+<ul>
+<li>schema: Target schema. (Required)</li>
+<li>model: Target table.   (Required)</li>
+<li>attributes: Columns to retrieve.  (Required)</li>
+<li>limit offset : These are applied to the parent table to control the number of rows returned.</li>
+<li>With In Include the required is an madatory field.</li>
+</ul>
+<h4 id="order">Order:</h4>
+<p>Single column order is allowed.</p>
+<p>Example:</p>
+<pre><code>   "order": [["cart_products.id", "desc"]]
+</code></pre>
+<h4 id="group">Group:</h4>
+<pre><code>		"group": [
+	         "plugins.id"
+	    ]
+</code></pre>
+<p>Example :</p>
+<pre><code>{
+  "id": 1,
+  "operation": "FIND",
+  "data": {
+    "schema": "plugins",
+    "model": "plugin_subscription_details",
+    "attributes": [
+      "id",
+      "is_deleted",
+      "is_renewal"
+    ],
+    "where": {
+      "plugin_id": 466,
+      "store_id": 268
+    },
+    "limit": 1,
+    "offset": 0,
+    "Include": [
+      {
+        "model": "plugins",
+        "schema": "plugins",
+        "attributes": [
+          "id",
+          "plugin_name",
+          "plugin_image",
+          "is_deleted"
+        ],
+        "where": {
+          "is_deleted": false,
+          "is_enable": true
+        },
+        "required": true,
+        "Include": [
+          {
+            "model": "store_plugin_mapping",
+            "schema": "plugins",
+            "attributes": [
+              "id",
+              "is_active"
+            ],
+            "where": {
+              "is_active": true,
+              "store_id": 268
+            },
+            "required": false
+          }
+        ]
+      }
+    ]
+  }
+}
+</code></pre>
+<p>Return Value:</p>
+<pre><code>	[
+	  {
+	    "1": [
+	      {
+	        "plugins.id": 466,
+	        "plugins.is_deleted": false,
+	        "plugins.plugin_name": "Sales Countdown Timer",
+	        "plugins.plugin_image": "plugin/plugin1695277576170.png",
+	        "store_plugin_mapping.id": 3967,
+	        "plugin_subscription_details.id": 823,
+	        "store_plugin_mapping.is_active": true,
+	        "plugin_subscription_details.is_deleted": false,
+	        "plugin_subscription_details.is_renewal": true
+	      }
+	    ]
+	  }
+	]
+</code></pre>
+<p><em><strong>Return Value in an Array</strong></em>: The values from the <code>Include</code> are added to a single row within the array.</p>
+<h4 id="operation-find_one">“operation”: “FIND_ONE”</h4>
+<p>Alternative for sequelize  FindOne without the include condition.</p>
+<p>Input Requirements:</p>
+<ul>
+<li>schema: Target schema. (Required)</li>
+<li>model: Target table.   (Required)</li>
+<li>attributes: Columns to retrieve.  (Required)</li>
+<li>where: Conditions for filtering rows.</li>
+<li>Don’t use Include in FIND_ONE</li>
+</ul>
+<p>Example:</p>
+<pre><code>{
+    "id": 1,
+    "operation": "FIND_ONE",
+    "data": {
+        "schema": "orders",
+        "model": "cart_products",
+        "attributes": [
+            "id", "combination_name", "instruction", "quantity", "is_replace_order",
+            "product_id", "variant_id", "product_offers", "discount_id", 
+            "discount_product_id", "sales_discount_id", "is_deleted", "created_at",
+            "modified_at", "store_id", "fbt_id", "is_product_customizable",
+            "is_fbt_default_product"
+        ],
+        "where": {
+            "id": 24045,
+            "is_deleted": false
+        }
+    }
+}
+</code></pre>
+<p>Return Value:</p>
+<pre><code>[
+  {
+    "1": {
+      "cart_products.id": 1,
+      "cart_products.fbt_id": null,
+      "cart_products.quantity": 1,
+      "cart_products.store_id": 7,
+      "cart_products.created_at": "2023-10-06T11:43:13.063+00:00",
+      "cart_products.is_deleted": false,
+      "cart_products.product_id": 1,
+      "cart_products.variant_id": 2,
+      "cart_products.discount_id": null,
+      "cart_products.instruction": "XYZ",
+      "cart_products.modified_at": "2022-04-06T11:43:13.063+00:00",
+      "cart_products.product_offers": null,
+      "cart_products.combination_name": "ABCD",
+      "cart_products.is_replace_order": null,
+      "cart_products.sales_discount_id": null,
+      "cart_products.discount_product_id": null,
+      "cart_products.is_fbt_default_product": false,
+      "cart_products.is_product_customizable": false
+    }
+  }
+]
+</code></pre>
+<p><em><strong>Return Value in an Object</strong></em></p>
+<h4 id="operation-update">“operation”: “UPDATE”</h4>
+<p>For  update existing row.<br>
+Input Requirements:</p>
+<ul>
+<li>schema: Target schema. (Required)</li>
+<li>model: Target table.   (Required)</li>
+<li>values: Fields to update and their new values.  (Required)</li>
+<li>condition: Filtering criteria.  (Required)</li>
+</ul>
+<p>UPDATE data structure:</p>
+<p>Example:</p>
+<pre><code>{
+    "id": 2,
+    "operation": "UPDATE",
+    "data": {
+        "schema": "orders",
+        "model": "cart_products",
+        "values": {
+            "is_deleted": false,
+            "fbt_id": null
+        },
+        "condition": {
+            "id": 24045
+        }
+    }
+}
+</code></pre>
+<p>Return Value:</p>
+<pre><code>[
+  {
+    "2": 2
+  }
+]
+</code></pre>
+<p>It returns key value pair “2” is source_id and 2 is  number of column updated.</p>
+<h4 id="operation-insert">“operation”: “INSERT”</h4>
+<p>Inserts a new record.</p>
+<p>Input Requirements:</p>
+<ul>
+<li>schema: Target schema.</li>
+<li>model: Target table.</li>
+<li>values: Field-value pairs for the new record.</li>
+</ul>
+<p>INSERT data structure.</p>
+<p>Example:</p>
+<pre><code>{
+ "id": 2,
+    "operation": "INSERT", 
+    "data": {
+        "schema": "plugins", 
+        "model": "plugin_subscription_details", 
+        "values": {
+            "store_id": 268, 
+            "is_renewal": true, 
+            "plugin_id": 466, 
+            "plugin_plan_id": 2
+        }
+    }
+}
+</code></pre>
+<p>Return Value:</p>
+<pre><code>[
+  {
+    "2": {
+      "plugin_subscription_details.id": 823,
+      "plugin_subscription_details.store_id": 268,
+      "plugin_subscription_details.plugin_id": 466,
+      "plugin_subscription_details.created_at": null,
+      "plugin_subscription_details.is_deleted": false,
+      "plugin_subscription_details.is_renewal": true,
+      "plugin_subscription_details.modified_at": null,
+      "plugin_subscription_details.plugin_plan_id": 2
+    }
+  }
+]
+</code></pre>
+<h4 id="operation-raw_query">“operation”: “RAW_QUERY”,</h4>
+<p>For raw_query</p>
+<p>Example</p>
+<pre><code>{	
+"id":1,
+    "operation": "RAW_QUERY", 
+    "data": "SELECT * FROM plugins.plugins where id  = 1;"
+}
+</code></pre>
+<p>Return Value:</p>
+<pre><code>[
+  {
+    "1": [
+      {
+        "id": 1,
+        "type": true,
+        "index": null,
+        "items": null,
+        "is_pos": false,
+        "is_enable": true,
+        "created_at": "2024-06-27T07:21:30.326Z",
+        "created_by": null,
+        "is_deleted": false,
+        "route_path": null,
+        "description": "dddwsd",
+        "modified_at": "2024-08-09T08:57:15.402Z",
+        "plugin_code": "CHECKSHIP"
+      }
+    ]
+  }
+</code></pre>
+<p>]</p>
+<p>Return value as array for select query.</p>
+<h4 id="operation-find_and_count_all">“operation”: “FIND_AND_COUNT_ALL”</h4>
+<p>Same as FIND_ALL, but also returns the total number of matching rows.</p>
+<p>Example:</p>
+<pre><code>{
+    "id": 1,
+    "operation": "FIND_AND_COUNT_ALL",
+    "data": {
+        "schema": "orders",
+        "model": "cart_products_customize_details",
+        "attributes": [
+            "id",
+            "customize_image_link",
+            "uploaded_image",
+            "file_url",
+            "store_id",
+            "is_deleted",
+            "created_at",
+            "modified_at"
+        ],
+        "where": {
+            "is_deleted": false,
+			"cart_product_id":16398	  
+        }
+    }
+}
+</code></pre>
+<p>Return Value:</p>
+<pre><code>[
+  {
+    "1": {
+      "count": 1,
+      "result": [
+        {
+          "cart_products_customize_details.id": 318,
+          "cart_products_customize_details.file_url": "STORE_154/products/banana1712810825981_S154.jpg",
+          "cart_products_customize_details.store_id": 154,
+          "cart_products_customize_details.created_at": "2024-04-11T06:56:01.037Z",
+          "cart_products_customize_details.is_deleted": false,
+          "cart_products_customize_details.modified_at": "2024-04-11T06:56:01.037Z",
+          "cart_products_customize_details.uploaded_image": null,
+          "cart_products_customize_details.customize_image_link": "STORE_154/carts/name171281854731_1712818540751_S154.png"
+        }
+      ]
+    }
+  }
+]
+</code></pre>
+<h4 id="operation-find_or_create">“operation”: “FIND_OR_CREATE”</h4>
+<p>To find the record if not present create it.</p>
+<p>Input Requirements:</p>
+<ul>
+<li>schema: Target schema.</li>
+<li>model: Target table.</li>
+<li>attributes: It is required field.</li>
+<li>where: where condition for the operation.</li>
+<li>defaults: The value need to be inserted if not present.</li>
+</ul>
+<p>Example:</p>
+<pre><code>{
+    "id": 1,
+    "operation": "FIND_OR_CREATE",
+    "data": {
+        "schema": "users",
+        "model": "wishlist",
+        "attributes": [
+            "id",
+            "import_id",
+            "wishlist_id",
+            "wishlist_name",
+            "is_shared",
+            "store_id",
+            "is_deleted",
+            "created_at",
+            "modified_at"
+        ],
+        "where": {
+            "store_id": 268,
+            "customer_id": 22716,
+            "is_deleted": false
+        },
+        "defaults": {
+            "wishlist_name": "wishlist1070",
+            "wishlist_id": "5268480f-169d-40af-8bad-2d1a6ccf6688",
+            "is_deleted": false,
+            "customer_id": 22716,
+            "store_id": 268
+        }
+    }
+}
+</code></pre>
+<p>Return Value:</p>
+<pre><code>[
+  {
+    "1": {
+      "wishlist.id": 184,
+      "wishlist.store_id": 268,
+      "wishlist.import_id": null,
+      "wishlist.is_shared": null,
+      "wishlist.created_at": null,
+      "wishlist.is_deleted": false,
+      "wishlist.modified_at": null,
+      "wishlist.wishlist_id": "438e5504-c9b1-407e-a0ae-2373802ad205",
+      "wishlist.wishlist_name": "wishlist1070"
+    }
+  }
+]
+</code></pre>
+<h2 id="condition">condition</h2>
+<p>An array of conditions that determine whether the operation should execute. Each condition includes:</p>
+<ul>
+<li>source_id: The ID of the operation from which to retrieve the value.</li>
+<li>field: The specific field or attribute to evaluate.</li>
+<li>value: The value to compare against. Acceptable values are NULL, NOT NULL, or a specific value eg(1,“apple”)</li>
+</ul>
+<p>Example :</p>
+<pre><code>"condition": [
+    {
+        "source_id": 1,
+        "field": "cart_products.fbt_id",
+        "value": "NOT NULL"
+    }
+]
+</code></pre>
+<p>Which is equivalent to :</p>
+<p>IF cart_products.fbt_id IS NOT NULL THEN<br>
+END IF;</p>
+<p>If source_id is an FIND operation. Then its return value in an array format so we can use path to get its value<br>
+Path is only for FIND.</p>
+<pre><code>{
+    "source_id": 3,
+    "field": "cart_products.id",
+    "value": "NOT NULL",
+    "path": [0]
+}
+</code></pre>
+<p>path :[0] means getting the array 0 th index card_product.id and check whether its is nut null.</p>
+<p>Which is equivalent to :</p>
+<p>IF result[0].cart_products.fbt_id IS NOT NULL THEN<br>
+END IF;</p>
+<p>Above  is used to check whether the array length.</p>
+<p>To check the value from UPDATE operation.</p>
+<pre><code>        {
+            "source_id": 4
+        }
+</code></pre>
+<p>Just give the operation id.</p>
+<h2 id="replace--">replace  :</h2>
+<p>Defines dynamic value assignments during runtime. It need to be an array. Each replacement specifies: .</p>
+<ul>
+<li>source_id: The ID of the operation from which to retrieve the value.</li>
+<li>field: The specific field or attribute to retrieve the value from.</li>
+<li>path: An array indicating where in the value should be inserted.</li>
+</ul>
+<p>Example:</p>
+<pre><code>"replace": [
+    {
+        "fbt_id": {
+            "source_id": 1,
+            "field": "cart_products.fbt_id",
+            "path": ["where"]
+        }
+    }
+]
+</code></pre>
+<p>The above example  indicates that the cart_products.fbt_id value from operation with source_id 1 should be inserted into the where clause of the current operation with fbt_id as key .</p>
+<p>what it does:</p>
+<pre><code>{
+  "where": {
+	    "fbt_id": 18672 // 18672 is retrieved from the operation with source_id 1
+  }
+}
+</code></pre>
+<h5 id="path">Path</h5>
+<p>It represents the  path to access the nested elements in a hierarchical structure.</p>
+<pre><code>{
+    "source_id": 3,
+    "field": "cart_products.id",
+    "value": "NOT NULL",
+    "path": ["Include", "Include", "where"]
+}
+</code></pre>
+<h2 id="loop">loop</h2>
+<p>An array of operations to execute iteratively. Each loop operation can contain its own id, operation, data, condition, replace, and additional loop-specific parameters:</p>
+<p>Loop is only for findAll.</p>
+<h4 id="loop-dont-return-any-value-the-operation-is-done-on-background.">Loop dont return any value the operation is done on background.</h4>
+<p>Example:</p>
+<pre><code>    "loop": [
+        { 
+            "id": 1,
+            "operation": "FIND_ONE",
+            "data": {
+                "schema": "orders",
+                "model": "cart_products",
+                "attributes": [
+                    "id", "combination_name", "instruction", "quantity", "is_replace_order",
+                    "product_id", "variant_id", "product_offers", "discount_id",
+                    "discount_product_id", "sales_discount_id", "is_deleted", "created_at",
+                    "modified_at", "store_id", "fbt_id", "is_product_customizable",
+                    "is_fbt_default_product"
+                ],
+                "where": {
+                    "is_deleted": false,
+                    "fbt_id": null
+                }
+            },
+            "iteration_condition": [
+                {
+                    "parent": "loop",
+                    "field": "cart_products.id",
+                    "value": "NOT NULL"
+                },
+                {
+                    "parent": "loop",
+                    "field": "cart_products.fbt_id",
+                    "value": "NOT NULL"
+                },						  
+                {
+                    "parent": "result",
+                    "source_id": 1,
+                    "field": "cart_products.fbt_id",
+                    "value": "NOT NULL"
+                },
+                {
+                    "parent": "result",
+                    "source_id": 3,
+                    "field": "cart_products.id",
+                    "value": "NOT NULL",
+                    "path": [0]
+                }
+            ],
+            "iteration_replace": [
+                {
+                    "product_id": {
+                        "parent": "loop",
+                        "field": "cart_products.product_id",
+                        "path": ["where"]
+                    }
+                },
+                {
+                    "variant_id": {
+                        "parent": "loop",
+                        "field": "cart_products.variant_id",
+                        "path": ["where"]
+                    }
+                },
+                {
+                    "cart_id": {
+                        "parent": "loop",
+                        "field": "cart_products.cart_id",
+                        "path": ["where"]
+                    }
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "operation": "UPDATE",
+            "data": {
+                "schema": "orders",
+                "model": "cart_products",
+                "values": {
+                },
+                "condition": {
+                    "is_deleted": false
+                }
+            },
+            "condition": [
+                {
+                    "source_id": 1,
+                    "field": "cart_products.fbt_id",
+                    "value": "NULL"
+                },
+			{
+                    "source_id": 1,
+                    "field": "cart_products.fbt_id",
+                    "value": "NULL"
+                }
+            ],
+            "replace": [
+                {
+                    "id": {
+                        "source_id": 1,
+                        "field": "cart_products.id",
+                        "path": ["condition"]
+                    }
+                }
+            ],
+            "iteration_condition": [
+                {
+                    "parent": "loop",
+                    "field": "cart_products.id",
+                    "value": "NOT NULL"
+                },
+                {
+                    "parent": "loop",
+                    "field": "cart_products.fbt_id",
+                    "value": "NOT NULL"
+                },						  
+                {
+                    "parent": "result",
+                    "source_id": 1,
+                    "field": "cart_products.fbt_id",
+                    "value": "NOT NULL"
+                },
+                {
+                    "parent": "result",
+                    "source_id": 3,
+                    "field": "cart_products.id",
+                    "value": "NOT NULL",
+                    "path": [0]
+                }
+            ]
+        }
+    ]
+</code></pre>
+<h3 id="iteration_condition">iteration_condition:</h3>
+<p>Similar to condition but used to get data from the loop.<br>
+Example:</p>
+<pre><code>"iteration_condition": [
+    {
+        "parent": "loop",
+        "field": "cart_products.fbt_id",
+        "value": "NOT NULL"
+    },
+    {
+        "parent": "result",
+        "source_id": 1,
+        "field": "cart_products.fbt_id",
+        "value": "NOT NULL",
+        "path": [0]
+    }
+]
+</code></pre>
+<p>The iteration_condition need to be an array.</p>
+<h5 id="parent">parent</h5>
+<p>can have two values:</p>
+<ul>
+<li>
+<p>loop: Used to get value from the loop.</p>
+</li>
+<li>
+<p>result: Used to get value from the above operation.</p>
+</li>
+</ul>
+<p>source_id: The ID of the operation from which to retrieve the value.  It is only for result .</p>
+<p>field: The specific field or attribute to evaluate.</p>
+<p>value: The value to compare against. Acceptable values are NULL, NOT NULL, or a specific value eg(1,“apple”).</p>
+<p>path: It is only  if the source_id  has the FIND operator .</p>
+<h3 id="iteration_replace">iteration_replace:</h3>
+<p>Defines dynamic value assignments specific to each iteration. Same as the normal replace.</p>
+<p>Example :</p>
+<pre><code>   "iteration_replace": [
+                {
+                    "product_id": {
+                        "parent": "loop",
+                        "field": "cart_products.product_id",
+                        "path": ["where"]
+                    }
+                },
+                {
+                    "variant_id": {
+                        "parent": "loop",
+                        "field": "cart_products.variant_id",
+                        "path": ["where"]
+                    }
+                },
+                {
+                    "cart_id": {
+                        "parent": "loop",
+                        "field": "cart_products.cart_id",
+                        "path": ["where"]
+                    }
+                }
+            ]
+</code></pre>
+<p>The parent key can have two values:</p>
+<ul>
+<li>
+<p>loop: Used to get value from the loop.</p>
+</li>
+<li>
+<p>result: Used to get value from the above operation.</p>
+</li>
+</ul>
+<p>source_id:  The ID of the operation from which to retrieve the value.  It is only for result.</p>
+<h4 id="operators">Operators:</h4>
+<p>iLike :<br>
+Example:</p>
+<pre><code>{
+  "is_enable": true,
+  "is_deleted": false,
+  "plugin_name": { "iLike": "%del%" }
+}
+</code></pre>
+<p>lte:<br>
+Example:</p>
+<pre><code>    "where": {
+      "plan_amount": {"lte": 20.00}				  
+    }	
+</code></pre>
+<p>lt :<br>
+Example:</p>
+<pre><code>"where": {
+  "plan_amount": {"lt": 20.00}				  
+}
+</code></pre>
+<p>gte:<br>
+Example:</p>
+<pre><code>"where": {
+  "plan_amount": {"gte": 20.00}				  
+}
+</code></pre>
+<p>gt:<br>
+Example:</p>
+<pre><code>"where": {
+  "plan_amount": {"gt": 20.00}				  
+}	
+</code></pre>
+<p>eq:<br>
+Example:</p>
+<pre><code>"where": {
+  "plan_amount": {"eq": 20.00}				  
+}	
+</code></pre>
+<p>ne:<br>
+Example:</p>
+<pre><code>"where": {
+  "plan_amount": {"ne": 20.00}				  
+}
+</code></pre>
+</div>
+</body>
+
+</html>
